@@ -1,0 +1,23 @@
+name: Build Branch
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: Build Branch
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2
+      - name: Install Python Packages
+        run: |
+          python3 -m pip install --upgrade build
+      - name: Lint Code Base
+        uses: psf/black@stable
+        with:
+          args: ". --check"
+      - name: Build Package
+        run: |
+          python3 -m build
