@@ -20,7 +20,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="deep-net",
-    version="0.1.0",
+    version="0.2.0",
     author="Nadun De Silva",
     author_email="nadunrds@gmail.com",
     description="A Simple Library for Neural Networks",
@@ -32,13 +32,11 @@ setuptools.setup(
     },
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: Apache 2.0",
+        "License :: OSI Approved :: Apache Software License",
         "Operating System :: OS Independent",
     ],
     package_dir={"": "src"},
     packages=setuptools.find_packages(where="src"),
     python_requires=">=3.6",
-    install_requires=[
-        "numpy >= 1.19.5"
-    ]
+    install_requires=["numpy >= 1.19.5"],
 )

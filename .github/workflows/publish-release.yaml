@@ -1,6 +1,6 @@
-name: Build Branch
+name: Publish Release
 
-on: [push, pull_request]
+on: workflow_dispatch
 
 jobs:
   build:
@@ -25,3 +25,9 @@ jobs:
         run: |
           python3 -m pip install --upgrade --force-reinstall dist/*.whl
           python3 -m pytest tests
+      - name: Upload to PyPi
+        run: |
+          python3 -m twine upload dist/*
+        env:
+          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
+          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
