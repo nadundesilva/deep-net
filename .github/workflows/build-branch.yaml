@@ -13,7 +13,7 @@ jobs:
         uses: actions/setup-python@v2
       - name: Install Python Packages
         run: |
-          python3 -m pip install --upgrade build
+          python3 -m pip install --upgrade build pytest
       - name: Lint Code Base
         uses: psf/black@stable
         with:
@@ -21,3 +21,7 @@ jobs:
       - name: Build Package
         run: |
           python3 -m build
+      - name: Run Tests
+        run: |
+          python3 -m pip install --upgrade --force-reinstall dist/*.whl
+          python3 -m pytest tests
