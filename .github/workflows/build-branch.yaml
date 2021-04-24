@@ -13,7 +13,7 @@ jobs:
         uses: actions/setup-python@v2
       - name: Install Python Packages
         run: |
-          python3 -m pip install --upgrade build pytest twine
+          python3 -m pip install --upgrade .[dev] build twine
       - name: Lint Code Base
         uses: psf/black@stable
         with:
