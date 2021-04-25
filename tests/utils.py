@@ -42,3 +42,7 @@ def visit_multi_dimensional_array_pair(
     else:
         for i in range(len(matrixA)):
             visitItem(matrixA[i], None if matrixB is None else matrixB[i])
+
+
+def assertEqual(itemA, itemB):
+    assert itemA == itemB

@@ -16,13 +16,24 @@ limitations under the License.
 import numpy as np
 
 
-def sigmoid(z: np.ndarray):
-    return 1 / (1 + np.exp(-z))
+class Activation:
+    def propagate_forward(self, Z: np.ndarray) -> np.ndarray:
+        raise NotImplementedError()
+
+    def propagate_backward(self) -> np.ndarray:
+        raise NotImplementedError()
 
 
-def relu(z: np.ndarray):
-    return np.maximum(z, np.zeros(z.shape))
+class Sigmoid(Activation):
+    def propagate_forward(self, Z: np.ndarray) -> np.ndarray:
+        return 1 / (1 + np.exp(-Z))
 
 
-def tanh(z: np.ndarray):
-    return np.tanh(z)
+class Relu(Activation):
+    def propagate_forward(self, Z: np.ndarray) -> np.ndarray:
+        return np.maximum(Z, np.zeros(Z.shape))
+
+
+class Tanh(Activation):
+    def propagate_forward(self, Z: np.ndarray) -> np.ndarray:
+        return np.tanh(Z)

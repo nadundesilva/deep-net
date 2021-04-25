@@ -14,33 +14,36 @@ limitations under the License.
 """
 
 from unittest import TestCase
-from deep_net.initializers import constant, random
+from deep_net.initializers import Constant, Random
 from typing import Tuple, Callable
 import numpy as np
 import tests.utils as utils
 
 
-class InitializersTestCase(TestCase):
-    test_shapes = [
-        tuple([np.random.randint(1, 100) for y in range(x)]) for x in range(1, 3)
-    ]
+test_shapes = [
+    tuple([np.random.randint(1, 100) for y in range(x)]) for x in range(1, 3)
+]
 
-    def test_constant_initializer(self):
-        test_constants = [-13, 0, 57.5]
-        for test_constant in test_constants:
-            for shape in self.test_shapes:
-                matrix = constant(test_constant, shape)
 
-                self.assertEqual(matrix.shape, shape)
-                utils.visit_multi_dimensional_array(
-                    matrix, lambda item: self.assertEqual(item, test_constant)
-                )
+def test_constant_initializer():
+    test_constants = [-13, 0, 57.5]
+    for test_constant in test_constants:
+        for shape in test_shapes:
+            initializer = Constant(test_constant)
+            matrix = initializer.init_matrix(shape)
 
-    def test_random_initializer(self):
-        for shape in self.test_shapes:
-            matrix = random(shape)
-
-            self.assertEqual(matrix.shape, shape)
+            assert matrix.shape == shape
             utils.visit_multi_dimensional_array(
-                matrix, lambda item: self.assertEqual(type(item), np.float64)
+                matrix, lambda item: utils.assertEqual(item, test_constant)
             )
+
+
+def test_random_initializer():
+    for shape in test_shapes:
+        initializer = Random()
+        matrix = initializer.init_matrix(shape)
+
+        assert matrix.shape == shape
+        utils.visit_multi_dimensional_array(
+            matrix, lambda item: utils.assertEqual(type(item), np.float64)
+        )

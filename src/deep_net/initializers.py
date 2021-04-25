@@ -17,9 +17,21 @@ from typing import Tuple
 import numpy as np
 
 
-def constant(constant, shape: Tuple) -> np.ndarray:
-    return np.full(shape, constant, dtype=float)
+class Initializer:
+    def init_matrix(shape: Tuple) -> np.ndarray:
+        raise NotImplementedError()
 
 
-def random(shape: Tuple) -> np.ndarray:
-    return np.random.random(shape).astype("float64")
+class Constant(Initializer):
+    constant: float
+
+    def __init__(self, constant: float):
+        self.constant = constant
+
+    def init_matrix(self, shape: Tuple) -> np.ndarray:
+        return np.full(shape, self.constant, dtype=float)
+
+
+class Random(Initializer):
+    def init_matrix(self, shape: Tuple) -> np.ndarray:
+        return np.random.random(shape).astype("float64")
