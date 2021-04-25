@@ -14,14 +14,15 @@ limitations under the License.
 """
 
 from unittest import TestCase
-from deep_net.activations import sigmoid
+from deep_net.activations import sigmoid, relu
 import numpy as np
 import tests.utils as utils
 
 
 class ActivationsTestCase(TestCase):
+    activation_input = np.array([[4, 5.1, -100], [0, 14000.2, -1.3]])
+
     def test_sigmoid_activation(self):
-        activation_input = np.array([[4, 5.1, -100], [0, 14000.2, -1.3]])
         expected_output = np.array(
             [
                 [0.9820137900379085, 0.9939401985084158, 3.7200759760208356e-44],
@@ -29,7 +30,17 @@ class ActivationsTestCase(TestCase):
             ]
         )
 
-        activation_output = sigmoid(activation_input)
+        activation_output = sigmoid(self.activation_input)
+        utils.visit_multi_dimensional_array_pair(
+            activation_output,
+            expected_output,
+            lambda itemA, itemB: self.assertEqual(itemA, itemB),
+        )
+
+    def test_relu_activation(self):
+        expected_output = np.array([[4, 5.1, 0], [0, 14000.2, 0]])
+
+        activation_output = relu(self.activation_input)
         utils.visit_multi_dimensional_array_pair(
             activation_output,
             expected_output,
