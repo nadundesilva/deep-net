@@ -22,3 +22,7 @@ def sigmoid(z: np.ndarray):
 
 def relu(z: np.ndarray):
     return np.maximum(z, np.zeros(z.shape))
+
+
+def tanh(z: np.ndarray):
+    return np.tanh(z)

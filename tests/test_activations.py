@@ -14,7 +14,7 @@ limitations under the License.
 """
 
 from unittest import TestCase
-from deep_net.activations import sigmoid, relu
+from deep_net.activations import sigmoid, relu, tanh
 import numpy as np
 import tests.utils as utils
 
@@ -41,6 +41,21 @@ class ActivationsTestCase(TestCase):
         expected_output = np.array([[4, 5.1, 0], [0, 14000.2, 0]])
 
         activation_output = relu(self.activation_input)
+        utils.visit_multi_dimensional_array_pair(
+            activation_output,
+            expected_output,
+            lambda itemA, itemB: self.assertEqual(itemA, itemB),
+        )
+
+    def test_tanh_activation(self):
+        expected_output = np.array(
+            [
+                [0.999329299739067, 0.9999256621257943, -1.0],
+                [0.0, 1.0, -0.8617231593133063],
+            ]
+        )
+
+        activation_output = tanh(self.activation_input)
         utils.visit_multi_dimensional_array_pair(
             activation_output,
             expected_output,
