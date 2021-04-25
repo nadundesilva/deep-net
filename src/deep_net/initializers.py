@@ -17,21 +17,9 @@ from typing import Tuple
 import numpy as np
 
 
-class Initializer:
-    def init_multi_dimensional_array(shape: Tuple) -> np.ndarray:
-        raise Exception("Not Implemented")
+def constant(constant, shape: Tuple) -> np.ndarray:
+    return np.full(shape, constant, dtype=float)
 
 
-class Constant(Initializer):
-    constant: float
-
-    def __init__(self, constant: float):
-        self.constant = constant
-
-    def init_multi_dimensional_array(self, shape: Tuple) -> np.ndarray:
-        return np.full(shape, self.constant, dtype=float)
-
-
-class Random(Initializer):
-    def init_multi_dimensional_array(self, shape: Tuple) -> np.ndarray:
-        return np.random.random(shape).astype("float64")
+def random(shape: Tuple) -> np.ndarray:
+    return np.random.random(shape).astype("float64")

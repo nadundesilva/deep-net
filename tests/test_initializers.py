@@ -14,7 +14,7 @@ limitations under the License.
 """
 
 from unittest import TestCase
-from deep_net.initializers import Constant, Random
+from deep_net.initializers import constant, random
 from typing import Tuple, Callable
 import numpy as np
 import tests.utils as utils
@@ -27,20 +27,18 @@ class InitializersTestCase(TestCase):
 
     def test_constant_initializer(self):
         test_constants = [-13, 0, 57.5]
-        for constant in test_constants:
+        for test_constant in test_constants:
             for shape in self.test_shapes:
-                initializer = Constant(constant)
-                matrix = initializer.init_multi_dimensional_array(shape)
+                matrix = constant(test_constant, shape)
 
                 self.assertEqual(matrix.shape, shape)
                 utils.visit_multi_dimensional_array(
-                    matrix, lambda item: self.assertEqual(item, constant)
+                    matrix, lambda item: self.assertEqual(item, test_constant)
                 )
 
     def test_random_initializer(self):
         for shape in self.test_shapes:
-            initializer = Random()
-            matrix = initializer.init_multi_dimensional_array(shape)
+            matrix = random(shape)
 
             self.assertEqual(matrix.shape, shape)
             utils.visit_multi_dimensional_array(
