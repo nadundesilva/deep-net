@@ -17,6 +17,7 @@ from unittest import TestCase
 from deep_net.initializers import Constant, Random
 from typing import Tuple, Callable
 import numpy as np
+import tests.utils as utils
 
 
 class InitializersTestCase(TestCase):
@@ -32,7 +33,7 @@ class InitializersTestCase(TestCase):
                 matrix = initializer.init_multi_dimensional_array(shape)
 
                 self.assertEqual(matrix.shape, shape)
-                self._visit_multi_dimensional_array(
+                utils.visit_multi_dimensional_array(
                     matrix, lambda item: self.assertEqual(item, constant)
                 )
 
@@ -42,16 +43,6 @@ class InitializersTestCase(TestCase):
             matrix = initializer.init_multi_dimensional_array(shape)
 
             self.assertEqual(matrix.shape, shape)
-            self._visit_multi_dimensional_array(
+            utils.visit_multi_dimensional_array(
                 matrix, lambda item: self.assertEqual(type(item), np.float64)
             )
-
-    def _visit_multi_dimensional_array(
-        self, matrix: np.ndarray, visitItem: Callable[[any], None]
-    ):
-        if len(matrix.shape) > 1:
-            for matrix_dimension in matrix:
-                self._visit_multi_dimensional_array(matrix_dimension, visitItem)
-        else:
-            for item in matrix:
-                visitItem(item)
