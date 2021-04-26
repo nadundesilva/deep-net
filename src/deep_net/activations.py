@@ -25,45 +25,45 @@ class Activation:
 
 
 class Sigmoid(Activation):
-    A: np.ndarray = None
+    _A: np.ndarray = None
 
     def map(self, Z: np.ndarray) -> np.ndarray:
-        self.A = 1 / (1 + np.exp(-Z))
-        return self.A
+        self._A = 1 / (1 + np.exp(-Z))
+        return self._A
 
     def derivative(self) -> np.ndarray:
-        if self.A is None:
+        if self._A is None:
             raise ValueError("map should be called before derivate")
-        dA = self.A * (1 - self.A)
-        self.A = None
+        dA = self._A * (1 - self._A)
+        self._A = None
         return dA
 
 
 class Relu(Activation):
-    Z: np.ndarray = None
+    _Z: np.ndarray = None
 
     def map(self, Z: np.ndarray) -> np.ndarray:
-        self.Z = Z
+        self._Z = Z
         return np.maximum(Z, np.zeros(Z.shape))
 
     def derivative(self) -> np.ndarray:
-        if self.Z is None:
+        if self._Z is None:
             raise ValueError("map should be called before derivate")
-        dA = np.where(self.Z > 0, np.ones(self.Z.shape), np.zeros(self.Z.shape))
-        self.Z = None
+        dA = np.where(self._Z > 0, np.ones(self._Z.shape), np.zeros(self._Z.shape))
+        self._Z = None
         return dA
 
 
 class Tanh(Activation):
-    A: np.ndarray = None
+    _A: np.ndarray = None
 
     def map(self, Z: np.ndarray) -> np.ndarray:
-        self.A = np.tanh(Z)
-        return self.A
+        self._A = np.tanh(Z)
+        return self._A
 
     def derivative(self) -> np.ndarray:
-        if self.A is None:
+        if self._A is None:
             raise ValueError("map should be called before derivate")
-        dA = 1 - self.A ** 2
-        self.A = None
+        dA = 1 - self._A ** 2
+        self._A = None
         return dA

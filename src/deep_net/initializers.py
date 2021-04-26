@@ -23,13 +23,13 @@ class Initializer:
 
 
 class Constant(Initializer):
-    constant: float
+    _constant: float
 
     def __init__(self, constant: float):
-        self.constant = constant
+        self._constant = constant
 
     def init_matrix(self, shape: Tuple) -> np.ndarray:
-        return np.full(shape, self.constant, dtype=float)
+        return np.full(shape, self._constant, dtype=float)
 
 
 class Random(Initializer):
