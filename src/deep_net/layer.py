@@ -13,25 +13,22 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from typing import Tuple
+from numpy.typing import ArrayLike
+from deep_net.initializers import Initializer
 import numpy as np
 
 
-class Initializer:
-    def init_tensor(shape: Tuple) -> np.ndarray:
-        raise NotImplementedError()
+class Layer:
+    _size: int
+    _W: ArrayLike
+    _b: ArrayLike
 
+    def __init__(self, size: int):
+        self._size = size
 
-class Constant(Initializer):
-    _constant: float
+    def init_parameters(self, prev_layer_size: int, initializer: Initializer) -> None:
+        self._W = initializer.init_tensor((self._size, prev_layer_size))
+        self._b = initializer.init_tensor((self._size, 1))
 
-    def __init__(self, constant: float):
-        self._constant = constant
-
-    def init_tensor(self, shape: Tuple) -> np.ndarray:
-        return np.full(shape, self._constant, dtype=float)
-
-
-class Random(Initializer):
-    def init_tensor(self, shape: Tuple) -> np.ndarray:
-        return np.random.random(shape).astype("float64")
+    def activate(self, A_prev: ArrayLike) -> ArrayLike:
+        return np.dot(self._W, A_prev) + self._b

@@ -30,20 +30,20 @@ def test_constant_initializer():
     for test_constant in test_constants:
         for shape in test_shapes:
             initializer = Constant(test_constant)
-            matrix = initializer.init_matrix(shape)
+            tensor = initializer.init_tensor(shape)
 
-            assert matrix.shape == shape
-            utils.visit_multi_dimensional_array(
-                matrix, lambda item: utils.assertEqual(item, test_constant)
+            assert tensor.shape == shape
+            utils.visit_tensor(
+                tensor, lambda item: utils.assertEqual(item, test_constant)
             )
 
 
 def test_random_initializer():
     for shape in test_shapes:
         initializer = Random()
-        matrix = initializer.init_matrix(shape)
+        tensor = initializer.init_tensor(shape)
 
-        assert matrix.shape == shape
-        utils.visit_multi_dimensional_array(
-            matrix, lambda item: utils.assertEqual(type(item), np.float64)
+        assert tensor.shape == shape
+        utils.visit_tensor(
+            tensor, lambda item: utils.assertEqual(type(item), np.float64)
         )

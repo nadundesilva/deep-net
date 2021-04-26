@@ -16,7 +16,6 @@ limitations under the License.
 from unittest import TestCase
 from deep_net.activations import Sigmoid, Relu, Tanh
 import numpy as np
-import tests.utils as utils
 import pytest
 
 
@@ -98,31 +97,23 @@ def test_activations(
 ):
     map_output = activation.map(activation_input)
     assert map_output.shape == expected_map_output.shape
-    utils.visit_multi_dimensional_array_pair(
-        map_output, expected_map_output, utils.assertEqual
-    )
+    np.testing.assert_array_equal(map_output, expected_map_output)
 
     derivative_output = activation.derivative()
     assert derivative_output.shape == expected_derivative_output.shape
-    utils.visit_multi_dimensional_array_pair(
-        derivative_output, expected_derivative_output, utils.assertEqual
-    )
+    np.testing.assert_array_equal(derivative_output, expected_derivative_output)
 
     additional_map_output = activation.map(additional_activation_input)
     assert additional_map_output.shape == expected_additional_map_output.shape
-    utils.visit_multi_dimensional_array_pair(
-        additional_map_output, expected_additional_map_output, utils.assertEqual
-    )
+    np.testing.assert_array_equal(additional_map_output, expected_additional_map_output)
 
     additional_derivative_output = activation.derivative()
     assert (
         additional_derivative_output.shape
         == expected_additional_derivative_output.shape
     )
-    utils.visit_multi_dimensional_array_pair(
-        additional_derivative_output,
-        expected_additional_derivative_output,
-        utils.assertEqual,
+    np.testing.assert_array_equal(
+        additional_derivative_output, expected_additional_derivative_output
     )
 
 

@@ -13,35 +13,34 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+from numpy.typing import ArrayLike
 from typing import Callable
 import numpy as np
 
 
-def visit_multi_dimensional_array(matrix: np.ndarray, visitItem: Callable[[any], None]):
-    visit_multi_dimensional_array_pair(
-        matrix, None, lambda itemA, itemB: visitItem(itemA)
-    )
+def visit_tensor(tensor: ArrayLike, visitItem: Callable[[any], None]):
+    visit_tensor_pair(tensor, None, lambda itemA, itemB: visitItem(itemA))
 
 
-def visit_multi_dimensional_array_pair(
-    matrixA: np.ndarray, matrixB: np.ndarray, visitItem: Callable[[any, any], None]
+def visit_tensor_pair(
+    tensorA: ArrayLike, tensorB: ArrayLike, visitItem: Callable[[any, any], None]
 ):
-    if matrixA is not None and matrixB is not None and matrixA.shape != matrixB.shape:
+    if tensorA is not None and tensorB is not None and tensorA.shape != tensorB.shape:
         raise Exception(
             "Shapes of the two matrices "
-            + str(matrixA.shape)
+            + str(tensorA.shape)
             + ", "
-            + str(matrixB.shape)
+            + str(tensorB.shape)
             + " not equal"
         )
-    if len(matrixA.shape) > 1:
-        for i in range(len(matrixA)):
-            visit_multi_dimensional_array_pair(
-                matrixA[i], None if matrixB is None else matrixB[i], visitItem
+    if len(tensorA.shape) > 1:
+        for i in range(len(tensorA)):
+            visit_tensor_pair(
+                tensorA[i], None if tensorB is None else tensorB[i], visitItem
             )
     else:
-        for i in range(len(matrixA)):
-            visitItem(matrixA[i], None if matrixB is None else matrixB[i])
+        for i in range(len(tensorA)):
+            visitItem(tensorA[i], None if tensorB is None else tensorB[i])
 
 
 def assertEqual(itemA, itemB):
