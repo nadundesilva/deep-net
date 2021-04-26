@@ -14,11 +14,12 @@ limitations under the License.
 """
 
 from typing import Tuple
+from numpy.typing import ArrayLike
 import numpy as np
 
 
 class Initializer:
-    def init_matrix(shape: Tuple) -> np.ndarray:
+    def init_matrix(shape: Tuple) -> ArrayLike:
         raise NotImplementedError()
 
 
@@ -28,10 +29,10 @@ class Constant(Initializer):
     def __init__(self, constant: float):
         self._constant = constant
 
-    def init_matrix(self, shape: Tuple) -> np.ndarray:
+    def init_matrix(self, shape: Tuple) -> ArrayLike:
         return np.full(shape, self._constant, dtype=float)
 
 
 class Random(Initializer):
-    def init_matrix(self, shape: Tuple) -> np.ndarray:
+    def init_matrix(self, shape: Tuple) -> ArrayLike:
         return np.random.random(shape).astype("float64")

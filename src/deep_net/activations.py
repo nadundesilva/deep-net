@@ -13,25 +13,26 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+from numpy.typing import ArrayLike
 import numpy as np
 
 
 class Activation:
-    def map(self, Z: np.ndarray) -> np.ndarray:
+    def map(self, Z: ArrayLike) -> ArrayLike:
         raise NotImplementedError()
 
-    def derivative(self) -> np.ndarray:
+    def derivative(self) -> ArrayLike:
         raise NotImplementedError()
 
 
 class Sigmoid(Activation):
-    _A: np.ndarray = None
+    _A: ArrayLike = None
 
-    def map(self, Z: np.ndarray) -> np.ndarray:
+    def map(self, Z: ArrayLike) -> ArrayLike:
         self._A = 1 / (1 + np.exp(-Z))
         return self._A
 
-    def derivative(self) -> np.ndarray:
+    def derivative(self) -> ArrayLike:
         if self._A is None:
             raise ValueError("map should be called before derivate")
         dA = self._A * (1 - self._A)
@@ -40,13 +41,13 @@ class Sigmoid(Activation):
 
 
 class Relu(Activation):
-    _Z: np.ndarray = None
+    _Z: ArrayLike = None
 
-    def map(self, Z: np.ndarray) -> np.ndarray:
+    def map(self, Z: ArrayLike) -> ArrayLike:
         self._Z = Z
         return np.maximum(Z, np.zeros(Z.shape))
 
-    def derivative(self) -> np.ndarray:
+    def derivative(self) -> ArrayLike:
         if self._Z is None:
             raise ValueError("map should be called before derivate")
         dA = np.where(self._Z > 0, np.ones(self._Z.shape), np.zeros(self._Z.shape))
@@ -55,13 +56,13 @@ class Relu(Activation):
 
 
 class Tanh(Activation):
-    _A: np.ndarray = None
+    _A: ArrayLike = None
 
-    def map(self, Z: np.ndarray) -> np.ndarray:
+    def map(self, Z: ArrayLike) -> ArrayLike:
         self._A = np.tanh(Z)
         return self._A
 
-    def derivative(self) -> np.ndarray:
+    def derivative(self) -> ArrayLike:
         if self._A is None:
             raise ValueError("map should be called before derivate")
         dA = 1 - self._A ** 2
