@@ -13,8 +13,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+from typing import Callable
 from numpy.typing import ArrayLike
 from deep_net.initializers import Initializer
+from deep_net.activations import Activation
 import numpy as np
 
 
@@ -22,13 +24,16 @@ class Layer:
     _size: int
     _W: ArrayLike
     _b: ArrayLike
+    _activation: Activation
 
-    def __init__(self, size: int):
+    def __init__(self, size: int, create_activation: Callable[[], Activation]):
         self._size = size
+        self._activation = create_activation()
 
     def init_parameters(self, prev_layer_size: int, initializer: Initializer) -> None:
         self._W = initializer.init_tensor((self._size, prev_layer_size))
         self._b = initializer.init_tensor((self._size, 1))
 
     def activate(self, A_prev: ArrayLike) -> ArrayLike:
-        return np.dot(self._W, A_prev) + self._b
+        Z = np.dot(self._W, A_prev) + self._b
+        return self._activation.map(Z)

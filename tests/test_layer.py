@@ -16,6 +16,7 @@ limitations under the License.
 from typing import Tuple
 from deep_net.layer import Layer
 from deep_net.initializers import Initializer
+from deep_net.activations import Activation
 from numpy.typing import ArrayLike
 import numpy as np
 
@@ -29,10 +30,16 @@ def test_layer_forward_propagation():
             else:
                 return np.array([[7], [8]])
 
-    A_prev = np.array([[11], [12], [13]])
-    expected_A = np.array([[81], [190]])
+    class MockActivation(Activation):
+        def map(self, Z: ArrayLike) -> ArrayLike:
+            expected_Z = [[81], [190]]
+            np.testing.assert_array_equal(Z, expected_Z)
+            return 2 * Z + 1
 
-    layer = Layer(2)
+    A_prev = np.array([[11], [12], [13]])
+    expected_A = np.array([[163], [381]])
+
+    layer = Layer(2, lambda: MockActivation())
     layer.init_parameters(3, MockInitializer())
 
     A = layer.activate(A_prev)
