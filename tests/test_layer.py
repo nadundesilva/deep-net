@@ -36,11 +36,19 @@ def test_layer_forward_propagation():
             np.testing.assert_array_equal(Z, expected_Z)
             return 2 * Z + 1
 
+        def derivative(self) -> ArrayLike:
+            return np.array([[0.3], [0.2]])
+
     A_prev = np.array([[11], [12], [13]])
     expected_A = np.array([[163], [381]])
+    expected_dA_prev = np.array([[4.075], [5.15], [6.225]])
 
-    layer = Layer(2, lambda: MockActivation())
+    layer = Layer(2, 0.01, lambda: MockActivation())
     layer.init_parameters(3, MockInitializer())
 
-    A = layer.activate(A_prev)
+    A = layer.propagate_forward(A_prev)
     np.testing.assert_array_equal(A, expected_A)
+
+    dA = np.array([[0.25], [5]])
+    dA_prev = layer.propagate_backward(dA)
+    np.testing.assert_array_equal(dA_prev, expected_dA_prev)
