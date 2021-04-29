@@ -23,5 +23,6 @@ jobs:
           python3 -m build
       - name: Run Tests
         run: |
+          python3 -m pip install --upgrade .[test]
           python3 -m pip install --upgrade --force-reinstall dist/*.whl
           python3 -m pytest

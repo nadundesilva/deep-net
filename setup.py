@@ -38,6 +38,6 @@ setuptools.setup(
     package_dir={"": "src"},
     packages=setuptools.find_packages(where="src"),
     python_requires=">=3.6",
-    install_requires=["numpy >= 1.19.0"],
-    extras_require={"dev": ["pytest", "black"]},
+    install_requires=["numpy ~= 1.19.2"],
+    extras_require={"dev": ["black ~= 20.8b1"], "test": ["pytest ~= 6.2.3"]},
 )
