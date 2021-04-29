@@ -18,14 +18,36 @@ import numpy as np
 
 
 class Activation:
+    """
+    Abstract activation function which should be inherited by all the activation implementations.
+    """
+
     def map(self, Z: ArrayLike) -> ArrayLike:
+        """
+        Map the input tensor to an output by applying the activation for each element in the tensor.
+
+        :param Z: The input tensor
+        :returns: The output tensor with the activation applied to each element
+        """
         raise NotImplementedError()
 
     def derivative(self) -> ArrayLike:
+        """
+        Get the derivative of each element as a tensor.
+
+        :returns: The output tensor with the the derivative of the activation applied to each element
+        """
         raise NotImplementedError()
 
 
 class Sigmoid(Activation):
+    """
+    Sigmoid activation function.
+
+    sigmoid(x) = 1 / (1 + e ** -x)
+    sigmoid_derivative(x) = sigmoid(x) * (1 - sigmoid(x))
+    """
+
     _A: ArrayLike = None
 
     def map(self, Z: ArrayLike) -> ArrayLike:
@@ -40,12 +62,19 @@ class Sigmoid(Activation):
         return dA
 
 
-class Relu(Activation):
+class ReLU(Activation):
+    """
+    Rectified Linear Unit activation function.
+
+    relu(x) = max(x, 0)
+    relu_derivative(x) = 1 if x > 0, 0 if x < 0
+    """
+
     _Z: ArrayLike = None
 
     def map(self, Z: ArrayLike) -> ArrayLike:
         self._Z = Z
-        return np.maximum(Z, np.zeros(Z.shape))
+        return np.maximum(self._Z, np.zeros(self._Z.shape))
 
     def derivative(self) -> ArrayLike:
         if self._Z is None:
@@ -55,7 +84,47 @@ class Relu(Activation):
         return dA
 
 
+class LeakyReLU(Activation):
+    """
+    Leaky Rectified Linear Unity activation function.
+
+    leaky_relu(x) = max(x, alpha * x)
+    leaky_relu_derivative(x) = 1 if x > 0, 0.01 if x < 0
+    """
+
+    _alpha: float
+    _Z: ArrayLike = None
+
+    def __init__(self, alpha: int = 0.01):
+        """
+        Initialize the activation.
+
+        :param alpha: The gradient of the function when the input is lower than zero
+        """
+        self._alpha = alpha
+
+    def map(self, Z: ArrayLike) -> ArrayLike:
+        self._Z = Z
+        return np.maximum(self._Z, self._Z * self._alpha)
+
+    def derivative(self) -> ArrayLike:
+        if self._Z is None:
+            raise ValueError("map should be called before derivate")
+        dA = np.where(
+            self._Z > 0, np.ones(self._Z.shape), np.full(self._Z.shape, self._alpha)
+        )
+        self._Z = None
+        return dA
+
+
 class Tanh(Activation):
+    """
+    Hyperbolic Tangent activation function.
+
+    tanh(x) = (e ** x - e ** -x) / (e ** x + e ** -x)
+    tanh_derivative(x) = (1 - tanh(x) ** 2)
+    """
+
     _A: ArrayLike = None
 
     def map(self, Z: ArrayLike) -> ArrayLike:
