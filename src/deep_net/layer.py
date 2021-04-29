@@ -40,29 +40,28 @@ class Layer:
     def __init__(
         self,
         size: int,
+        learning_rate: int,
         create_activation: Callable[[], Activation],
     ):
         """
         Initialize the layer of the Neural Network.
 
         :param size: The size of the Neural Network layer
+        :param learning_rate: The learning rate to be used by this layer
         :param create_activation: A function returning an activation function to be used by this layer
         """
         self._size = size
+        self._learning_rate = learning_rate
         self._activation = create_activation()
 
-    def init_parameters(
-        self, learning_rate: int, prev_layer_size: int, initializer: Initializer
-    ) -> None:
+    def init_parameters(self, prev_layer_size: int, initializer: Initializer) -> None:
         """
         Initialize the parameter tensors of a neural network.
 
-        :param learning_rate: The learning rate to be used by this layer
         :param prev_layer_size: The size of the previous layer
         :param initializer: The initializer to be used for initializing the parameter tensors of this layer
         """
         self._batch_size = 1
-        self._learning_rate = learning_rate
         self._W = initializer.init_tensor((self._size, prev_layer_size))
         self._b = initializer.init_tensor((self._size, self._batch_size))
 

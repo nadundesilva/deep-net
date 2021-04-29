@@ -43,8 +43,8 @@ def test_layer_forward_propagation():
     expected_A = np.array([[163], [381]])
     expected_dA_prev = np.array([[4.075], [5.15], [6.225]])
 
-    layer = Layer(2, lambda: MockActivation())
-    layer.init_parameters(0.01, 3, MockInitializer())
+    layer = Layer(2, 0.01, lambda: MockActivation())
+    layer.init_parameters(3, MockInitializer())
 
     A = layer.propagate_forward(A_prev)
     np.testing.assert_array_equal(A, expected_A)
