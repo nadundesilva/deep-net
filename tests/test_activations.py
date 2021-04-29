@@ -14,7 +14,7 @@ limitations under the License.
 """
 
 from unittest import TestCase
-from deep_net.activations import Sigmoid, ReLU, LeakyReLU, Tanh
+from deep_net.activations import Activation, Sigmoid, ReLU, LeakyReLU, Tanh
 import numpy as np
 import pytest
 
@@ -95,6 +95,14 @@ test_data = [
         ),
     ),
 ]
+
+
+def test_activation_interface():
+    activation = Activation()
+    with pytest.raises(NotImplementedError) as e:
+        activation.map(np.random.random((2, 3)))
+    with pytest.raises(NotImplementedError) as e:
+        activation.derivative()
 
 
 @pytest.mark.parametrize(

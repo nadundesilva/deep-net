@@ -14,15 +14,22 @@ limitations under the License.
 """
 
 from unittest import TestCase
-from deep_net.initializers import Constant, Random
+from deep_net.initializers import Initializer, Constant, Random
 from typing import Tuple, Callable
 import numpy as np
 import tests.utils as utils
+import pytest
 
 
 test_shapes = [
     tuple([np.random.randint(1, 100) for y in range(x)]) for x in range(1, 3)
 ]
+
+
+def test_activation_interface():
+    initializer = Initializer()
+    with pytest.raises(NotImplementedError) as e:
+        initializer.init_tensor((1, 2))
 
 
 def test_constant_initializer():

@@ -22,7 +22,7 @@ class Initializer:
     Abstract initializer which should be initialized by all tensor initializers.
     """
 
-    def init_tensor(shape: Tuple) -> np.ndarray:
+    def init_tensor(self, shape: Tuple) -> np.ndarray:
         """
         Initialize a tensor which is to be used as parameters.
 
