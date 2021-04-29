@@ -14,8 +14,12 @@
 
 __pycache__
 *.egg-info/
+.eggs/
 build/
 dist/
+.coverage
+htmlcov
+coverage.xml
 
 # IDEs
 .idea/
