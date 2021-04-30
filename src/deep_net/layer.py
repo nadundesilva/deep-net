@@ -26,7 +26,6 @@ class Layer:
     """
 
     _size: int
-    _batch_size: int
     _learning_rate: float
     _activation: Activation
 
@@ -61,7 +60,6 @@ class Layer:
         :param prev_layer_size: The size of the previous layer
         :param initializer: The initializer to be used for initializing the parameter tensors of this layer
         """
-        self._batch_size = 1
         W_shape = (self._size, prev_layer_size)
         if hasattr(self, "_W"):
             if self._W.shape != W_shape:
@@ -111,8 +109,8 @@ class Layer:
             )
 
         dZ = dA * self._activation.derivative()
-        dW = np.dot(dZ, self._A_prev.T) / self._batch_size
-        db = np.sum(dZ, axis=1, keepdims=True) / self._batch_size
+        dW = np.dot(dZ, self._A_prev.T) / self._A_prev.shape[1]
+        db = np.sum(dZ, axis=1, keepdims=True) / self._A_prev.shape[1]
         dA_prev = np.dot(self._W.T, dZ)
 
         self._update_params(dW, db)

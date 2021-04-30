@@ -26,13 +26,22 @@ test_data = [
     (
         np.array([[1, 2, 3], [4, 5, 6]]),
         np.array([[7], [8]]),
-        np.array([[11], [12], [13]]),
-        np.array([[81], [190]]),
-        np.array([[163], [381]]),
-        np.array([[0.3], [0.2]]),
-        np.array([[4.075], [5.15], [6.225]]),
-        np.array([[0.99175, 1.991, 2.99025], [3.89, 4.88, 5.87]]),
-        np.array([[6.99925], [7.99]]),
+        np.array([[11, 14, 17, 20, 23], [12, 15, 18, 21, 24], [13, 16, 19, 22, 25]]),
+        np.array([[81, 99, 117, 135, 153], [190, 235, 280, 325, 370]]),
+        np.array([[163, 199, 235, 271, 307], [381, 471, 561, 651, 741]]),
+        np.array([[0.25, 1, 1, 1, 1], [5, 1, 1, 1, 1]]),
+        np.array(
+            [[0.3, 0.112, 1.22, 0.002, 0.973], [0.2, 2.311, 0.113, 0.002, 0.8711]]
+        ),
+        np.array(
+            [
+                [4.075, 9.356, 1.672, 0.01, 4.4574],
+                [5.15, 11.779, 3.005, 0.014, 6.3015],
+                [6.225, 14.202, 4.338, 0.018000000000000002, 8.1456],
+            ]
+        ),
+        np.array([[0.908896, 1.904132, 2.899368], [3.8692994, 4.8607052, 5.852111]]),
+        np.array([[6.995236], [7.9914058]]),
     ),
     (
         np.array([[1, 2, 3], [4, 5, 6]]),
@@ -40,22 +49,25 @@ test_data = [
         np.array([[11, 14, 17, 20], [12, 15, 18, 21], [13, 16, 19, 22]]),
         np.array([[81, 99, 117, 135], [190, 235, 280, 325]]),
         np.array([[163, 199, 235, 271], [381, 471, 561, 651]]),
+        np.array([[0.25, 1.23, 0.01, 0.003], [5.11, 6.123, 5.463, 2.52]]),
         np.array([[0.3, 1.2, 0.007, 1.002], [0.2, 0.3, 0.4, 0.1]]),
         np.array(
             [
-                [4.075, 6.3, 8.00175, 2.2505],
-                [5.15, 8.1, 10.0035, 3.001],
-                [6.225, 9.9, 12.00525, 3.7515],
+                [4.163, 8.823599999999999, 8.74087, 1.011006],
+                [5.26, 12.1365, 10.92614, 1.266012],
+                [6.357, 15.4494, 13.11141, 1.521018],
             ]
         ),
-        np.array([[0.8993525, 1.89308, 2.8868075], [3.24, 4.1899999999999995, 5.14]]),
-        np.array([[6.9937275], [7.95]]),
+        np.array(
+            [[0.946124225, 1.942239035, 2.938353845], [3.8021325, 4.78889225, 5.775652]]
+        ),
+        np.array([[6.99611481], [7.98675975]]),
     ),
 ]
 
 
 @pytest.mark.parametrize(
-    """W_init, b_init, A_prev, expected_Z, expected_A, activation_derivative, expected_dA_prev,
+    """W_init, b_init, A_prev, expected_Z, expected_A, dA, activation_derivative, expected_dA_prev,
     W_optimized, b_optimized""",
     test_data,
 )
@@ -65,14 +77,15 @@ def test_layer_forward_propagation(
     A_prev: ArrayLike,
     expected_Z: ArrayLike,
     expected_A: ArrayLike,
+    dA: ArrayLike,
     activation_derivative: ArrayLike,
     expected_dA_prev: ArrayLike,
     W_optimized: ArrayLike,
     b_optimized: ArrayLike,
 ):
-    batch_size = len(b_init[0])
-    prev_layer_size = len(W_init)
-    layer_size = len(W_init[0])
+    batch_size = b_init.shape[1]
+    prev_layer_size = W_init.shape[0]
+    layer_size = W_init.shape[1]
 
     class MockInitializer(Initializer):
         def init_tensor(self, shape: Tuple) -> np.ndarray:
@@ -98,7 +111,6 @@ def test_layer_forward_propagation(
     A = layer.propagate_forward(A_prev)
     np.testing.assert_array_equal(A, expected_A)
 
-    dA = np.array([[0.25], [5]])
     dA_prev = layer.propagate_backward(dA)
     np.testing.assert_array_equal(dA_prev, expected_dA_prev)
 
