@@ -31,6 +31,8 @@ test_data = [
         np.array([[163], [381]]),
         np.array([[0.3], [0.2]]),
         np.array([[4.075], [5.15], [6.225]]),
+        np.array([[0.99175, 1.991, 2.99025], [3.89, 4.88, 5.87]]),
+        np.array([[6.99925], [7.99]]),
     ),
     (
         np.array([[1, 2, 3], [4, 5, 6]]),
@@ -46,12 +48,15 @@ test_data = [
                 [6.225, 9.9, 12.00525, 3.7515],
             ]
         ),
+        np.array([[0.8993525, 1.89308, 2.8868075], [3.24, 4.1899999999999995, 5.14]]),
+        np.array([[6.9937275], [7.95]]),
     ),
 ]
 
 
 @pytest.mark.parametrize(
-    """W_init, b_init, A_prev, expected_Z, expected_A, activation_derivative, expected_dA_prev""",
+    """W_init, b_init, A_prev, expected_Z, expected_A, activation_derivative, expected_dA_prev,
+    W_optimized, b_optimized""",
     test_data,
 )
 def test_layer_forward_propagation(
@@ -62,6 +67,8 @@ def test_layer_forward_propagation(
     expected_A: ArrayLike,
     activation_derivative: ArrayLike,
     expected_dA_prev: ArrayLike,
+    W_optimized: ArrayLike,
+    b_optimized: ArrayLike,
 ):
     batch_size = len(b_init[0])
     prev_layer_size = len(W_init)
@@ -94,3 +101,7 @@ def test_layer_forward_propagation(
     dA = np.array([[0.25], [5]])
     dA_prev = layer.propagate_backward(dA)
     np.testing.assert_array_equal(dA_prev, expected_dA_prev)
+
+    assert layer.size == 2
+    np.testing.assert_array_equal(layer.parameters[0], W_optimized)
+    np.testing.assert_array_equal(layer.parameters[1], b_optimized)

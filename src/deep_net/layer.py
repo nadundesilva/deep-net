@@ -97,6 +97,15 @@ class Layer:
     def size(self):
         return self._size
 
+    @property
+    def parameters(self):
+        return (self._W, self._b)
+
+    @parameters.setter
+    def set_parameters(self, new_params):
+        self._W = new_params[0]
+        self._b = new_params[1]
+
     def _update_params(self, dW: ArrayLike, db: ArrayLike) -> None:
         """
         Update the parameters of the current layer.
