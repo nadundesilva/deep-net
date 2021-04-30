@@ -62,8 +62,23 @@ class Layer:
         :param initializer: The initializer to be used for initializing the parameter tensors of this layer
         """
         self._batch_size = 1
-        self._W = initializer.init_tensor((self._size, prev_layer_size))
-        self._b = initializer.init_tensor((self._size, self._batch_size))
+        W_shape = (self._size, prev_layer_size)
+        if hasattr(self, "_W"):
+            if self._W.shape != W_shape:
+                raise ValueError(
+                    "Shape of the preset W does not match the expected shape"
+                )
+        else:
+            self._W = initializer.init_tensor(W_shape)
+
+        b_shape = (self._size, 1)
+        if hasattr(self, "_b"):
+            if self._b.shape != b_shape:
+                raise ValueError(
+                    "Shape of the preset b does not match the expected shape"
+                )
+        else:
+            self._b = initializer.init_tensor(b_shape)
 
     def propagate_forward(self, A_prev: ArrayLike) -> ArrayLike:
         """

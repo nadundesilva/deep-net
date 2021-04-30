@@ -107,7 +107,7 @@ def test_layer_forward_propagation(
     np.testing.assert_array_equal(layer.parameters[1], b_optimized)
 
 
-def test_setting_layer_params():
+def test_updating_layer_params():
     layer = Layer(5, 0.002, lambda: ReLU())
     layer.init_parameters(7, Constant(13))
 
@@ -122,7 +122,7 @@ def test_setting_layer_params():
     np.testing.assert_array_equal(layer.parameters[1], np.full((5, 1), 2))
 
 
-def test_setting_layer_params_with_invalid_shapes():
+def test_updating_layer_params_with_invalid_shapes():
     layer = Layer(5, 0.002, lambda: ReLU())
     layer.init_parameters(7, Constant(13))
 
@@ -140,6 +140,30 @@ def test_setting_layer_params_with_invalid_shapes():
         layer.parameters = (np.full((5, 7), 1), np.full((5, 2), 2))
     assert "ValueError('New shape of b need to be equal to the previous shape')" in str(
         e
+    )
+
+
+def test_setting_layer_params_with_invalid_W_shape():
+    layer = Layer(5, 0.002, lambda: ReLU())
+    layer.parameters = (np.full((5, 6), 1), np.full((5, 1), 2))
+
+    with pytest.raises(ValueError) as e:
+        layer.init_parameters(7, Constant(13))
+    assert (
+        "ValueError('Shape of the preset W does not match the expected shape')"
+        in str(e)
+    )
+
+
+def test_setting_layer_params_with_invalid_b_shape():
+    layer = Layer(5, 0.002, lambda: ReLU())
+    layer.parameters = (np.full((5, 7), 1), np.full((5, 3), 2))
+
+    with pytest.raises(ValueError) as e:
+        layer.init_parameters(7, Constant(13))
+    assert (
+        "ValueError('Shape of the preset b does not match the expected shape')"
+        in str(e)
     )
 
 
