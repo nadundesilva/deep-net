@@ -19,29 +19,56 @@ from deep_net.initializers import Initializer
 from deep_net.activations import Activation
 from numpy.typing import ArrayLike
 import numpy as np
+import pytest
 
 
-def test_layer_forward_propagation():
+test_data = [
+    (
+        np.array([[1, 2, 3], [4, 5, 6]]),
+        np.array([[7], [8]]),
+        np.array([[11], [12], [13]]),
+        np.array([[81], [190]]),
+        np.array([[163], [381]]),
+        np.array([[0.3], [0.2]]),
+        np.array([[4.075], [5.15], [6.225]]),
+    )
+]
+
+
+@pytest.mark.parametrize(
+    """W_init, b_init, A_prev, expected_Z, expected_A, activation_derivative, expected_dA_prev""",
+    test_data,
+)
+def test_layer_forward_propagation(
+    W_init: ArrayLike,
+    b_init: ArrayLike,
+    A_prev: ArrayLike,
+    expected_Z: ArrayLike,
+    expected_A: ArrayLike,
+    activation_derivative: ArrayLike,
+    expected_dA_prev: ArrayLike,
+):
+    batch_size = len(b_init[0])
+    prev_layer_size = len(W_init)
+    layer_size = len(W_init[0])
+
     class MockInitializer(Initializer):
         def init_tensor(self, shape: Tuple) -> np.ndarray:
-            assert shape[0] == 2 and (shape[1] == 3 or shape[1] == 1)
-            if shape[1] == 3:
-                return np.array([[1, 2, 3], [4, 5, 6]])
+            assert shape[0] == prev_layer_size and (
+                shape[1] == layer_size or shape[1] == batch_size
+            )
+            if shape[1] == layer_size:
+                return W_init
             else:
-                return np.array([[7], [8]])
+                return b_init
 
     class MockActivation(Activation):
         def map(self, Z: ArrayLike) -> ArrayLike:
-            expected_Z = [[81], [190]]
             np.testing.assert_array_equal(Z, expected_Z)
             return 2 * Z + 1
 
         def derivative(self) -> ArrayLike:
-            return np.array([[0.3], [0.2]])
-
-    A_prev = np.array([[11], [12], [13]])
-    expected_A = np.array([[163], [381]])
-    expected_dA_prev = np.array([[4.075], [5.15], [6.225]])
+            return activation_derivative
 
     layer = Layer(2, 0.01, lambda: MockActivation())
     layer.init_parameters(3, MockInitializer())
