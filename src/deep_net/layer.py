@@ -72,6 +72,9 @@ class Layer:
         :param A_prev: The activation of the previous layer
         :returns: The activation of this layer
         """
+        if not hasattr(self, "_W") or not hasattr(self, "_b"):
+            raise ValueError("Layer parameters needs to initialized first")
+
         self._A_prev = A_prev
         Z = np.dot(self._W, A_prev) + self._b
         return self._activation.map(Z)
@@ -84,6 +87,14 @@ class Layer:
         :param dA: The derivative of the activation of the current layer with respect to the loss
         :returns: The derivative of the activation of the previous layer with respect to the loss
         """
+        if not hasattr(self, "_W") or not hasattr(self, "_b"):
+            raise ValueError("Layer parameters needs to initialized first")
+
+        if not hasattr(self, "_A_prev"):
+            raise ValueError(
+                "backward propagation can only be performed after one pass of forward propagation"
+            )
+
         dZ = dA * self._activation.derivative()
         dW = np.dot(dZ, self._A_prev.T) / self._batch_size
         db = np.sum(dZ, axis=1, keepdims=True) / self._batch_size
@@ -103,12 +114,12 @@ class Layer:
 
     @parameters.setter
     def parameters(self, new_params):
-        if self._W.shape == new_params[0].shape:
+        if not hasattr(self, "_W") or self._W.shape == new_params[0].shape:
             self._W = new_params[0]
         else:
             raise ValueError("New shape of W need to be equal to the previous shape")
 
-        if self._b.shape == new_params[1].shape:
+        if not hasattr(self, "_b") or self._b.shape == new_params[1].shape:
             self._b = new_params[1]
         else:
             raise ValueError("New shape of b need to be equal to the previous shape")

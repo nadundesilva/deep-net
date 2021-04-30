@@ -141,3 +141,27 @@ def test_setting_layer_params_with_invalid_shapes():
     assert "ValueError('New shape of b need to be equal to the previous shape')" in str(
         e
     )
+
+
+def test_propagation_without_param_init():
+    layer = Layer(5, 0.002, lambda: ReLU())
+
+    with pytest.raises(ValueError) as e:
+        layer.propagate_forward(np.array([[12], [14], [13.2]]))
+    assert "ValueError('Layer parameters needs to initialized first')" in str(e)
+
+    with pytest.raises(ValueError) as e:
+        layer.propagate_backward(np.array([[0.84], [0.14], [0.342]]))
+    assert "ValueError('Layer parameters needs to initialized first')" in str(e)
+
+
+def test_back_propagation_without_forward_propagation():
+    layer = Layer(5, 0.002, lambda: ReLU())
+    layer.init_parameters(3, Constant(13))
+
+    with pytest.raises(ValueError) as e:
+        layer.propagate_backward(np.array([[0.25], [5], [1.2]]))
+    assert (
+        "ValueError('backward propagation can only be performed after one pass of forward propagation')"
+        in str(e)
+    )
