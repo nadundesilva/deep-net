@@ -15,8 +15,8 @@ limitations under the License.
 
 from typing import Tuple
 from deep_net.layer import Layer
-from deep_net.initializers import Initializer
-from deep_net.activations import Activation
+from deep_net.initializers import Initializer, Constant
+from deep_net.activations import Activation, ReLU
 from numpy.typing import ArrayLike
 import numpy as np
 import pytest
@@ -105,3 +105,39 @@ def test_layer_forward_propagation(
     assert layer.size == 2
     np.testing.assert_array_equal(layer.parameters[0], W_optimized)
     np.testing.assert_array_equal(layer.parameters[1], b_optimized)
+
+
+def test_setting_layer_params():
+    layer = Layer(5, 0.002, lambda: ReLU())
+    layer.init_parameters(7, Constant(13))
+
+    assert layer.size == 5
+    np.testing.assert_array_equal(layer.parameters[0], np.full((5, 7), 13))
+    np.testing.assert_array_equal(layer.parameters[1], np.full((5, 1), 13))
+
+    layer.parameters = (np.full((5, 7), 1), np.full((5, 1), 2))
+
+    assert layer.size == 5
+    np.testing.assert_array_equal(layer.parameters[0], np.full((5, 7), 1))
+    np.testing.assert_array_equal(layer.parameters[1], np.full((5, 1), 2))
+
+
+def test_setting_layer_params_with_invalid_shapes():
+    layer = Layer(5, 0.002, lambda: ReLU())
+    layer.init_parameters(7, Constant(13))
+
+    assert layer.size == 5
+    np.testing.assert_array_equal(layer.parameters[0], np.full((5, 7), 13))
+    np.testing.assert_array_equal(layer.parameters[1], np.full((5, 1), 13))
+
+    with pytest.raises(ValueError) as e:
+        layer.parameters = (np.full((5, 6), 1), np.full((5, 1), 2))
+    assert "ValueError('New shape of W need to be equal to the previous shape')" in str(
+        e
+    )
+
+    with pytest.raises(ValueError) as e:
+        layer.parameters = (np.full((5, 7), 1), np.full((5, 2), 2))
+    assert "ValueError('New shape of b need to be equal to the previous shape')" in str(
+        e
+    )

@@ -102,9 +102,16 @@ class Layer:
         return (self._W, self._b)
 
     @parameters.setter
-    def set_parameters(self, new_params):
-        self._W = new_params[0]
-        self._b = new_params[1]
+    def parameters(self, new_params):
+        if self._W.shape == new_params[0].shape:
+            self._W = new_params[0]
+        else:
+            raise ValueError("New shape of W need to be equal to the previous shape")
+
+        if self._b.shape == new_params[1].shape:
+            self._b = new_params[1]
+        else:
+            raise ValueError("New shape of b need to be equal to the previous shape")
 
     def _update_params(self, dW: ArrayLike, db: ArrayLike) -> None:
         """
