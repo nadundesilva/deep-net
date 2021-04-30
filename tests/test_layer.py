@@ -211,3 +211,49 @@ def test_back_propagation_without_forward_propagation():
         "ValueError('backward propagation can only be performed after one pass of forward propagation')"
         in str(e)
     )
+
+
+def test_forward_propagation_with_invalid_shape():
+    layer = Layer(7, 0.002, lambda: ReLU())
+    layer.init_parameters(3, Constant(41))
+
+    with pytest.raises(ValueError) as e:
+        layer.propagate_forward(np.full((3, 6, 11), 12))
+    assert (
+        "ValueError('Provided data tensor of invalid shape, expected: (3, mini_batch_size) provided: (3, 6, 11)')"
+        in str(e)
+    )
+
+    with pytest.raises(ValueError) as e:
+        layer.propagate_forward(np.full((4, 6), 12))
+    assert (
+        "ValueError('Provided data tensor of invalid shape, expected: (3, mini_batch_size) provided: (4, 6)')"
+        in str(e)
+    )
+
+
+def test_backward_propagation_with_invalid_shape():
+    layer = Layer(7, 0.002, lambda: ReLU())
+    layer.init_parameters(3, Constant(41))
+    layer.propagate_forward(np.full((3, 6), 12))
+
+    with pytest.raises(ValueError) as e:
+        layer.propagate_backward(np.full((7, 6, 11), 12))
+    assert (
+        "ValueError('Provided derivatives tensor of invalid shape, expected: (7, 6) provided: (7, 6, 11)')"
+        in str(e)
+    )
+
+    with pytest.raises(ValueError) as e:
+        layer.propagate_backward(np.full((8, 6), 12))
+    assert (
+        "ValueError('Provided derivatives tensor of invalid shape, expected: (7, 6) provided: (8, 6)')"
+        in str(e)
+    )
+
+    with pytest.raises(ValueError) as e:
+        layer.propagate_backward(np.full((7, 7), 12))
+    assert (
+        "ValueError('Provided derivatives tensor of invalid shape, expected: (7, 6) provided: (7, 7)')"
+        in str(e)
+    )

@@ -87,6 +87,13 @@ class Layer:
         """
         if not hasattr(self, "_W") or not hasattr(self, "_b"):
             raise ValueError("Layer parameters needs to initialized first")
+        if len(A_prev.shape) != 2 or A_prev.shape[0] != self._W.shape[1]:
+            raise ValueError(
+                "Provided data tensor of invalid shape, expected: ("
+                + str(self._W.shape[1])
+                + ", mini_batch_size) provided: "
+                + str(A_prev.shape)
+            )
 
         self._A_prev = A_prev
         Z = np.dot(self._W, A_prev) + self._b
@@ -106,6 +113,19 @@ class Layer:
         if not hasattr(self, "_A_prev"):
             raise ValueError(
                 "backward propagation can only be performed after one pass of forward propagation"
+            )
+        if (
+            len(dA.shape) != 2
+            or dA.shape[0] != self._W.shape[0]
+            or dA.shape[1] != self._A_prev.shape[1]
+        ):
+            raise ValueError(
+                "Provided derivatives tensor of invalid shape, expected: ("
+                + str(self._W.shape[0])
+                + ", "
+                + str(self._A_prev.shape[1])
+                + ") provided: "
+                + str(dA.shape)
             )
 
         dZ = dA * self._activation.derivative()
