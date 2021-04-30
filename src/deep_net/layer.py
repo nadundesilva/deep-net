@@ -93,6 +93,10 @@ class Layer:
         self._A_prev = None
         return dA_prev
 
+    @property
+    def size(self):
+        return self._size
+
     def _update_params(self, dW: ArrayLike, db: ArrayLike) -> None:
         """
         Update the parameters of the current layer.
