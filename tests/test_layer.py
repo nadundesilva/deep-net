@@ -143,6 +143,16 @@ def test_updating_layer_params_with_invalid_shapes():
     )
 
 
+def test_setting_layer_params():
+    layer = Layer(5, 0.002, lambda: ReLU())
+    layer.parameters = (np.full((5, 7), 1), np.full((5, 1), 2))
+    layer.init_parameters(7, Constant(13))
+
+    assert layer.size == 5
+    np.testing.assert_array_equal(layer.parameters[0], np.full((5, 7), 1))
+    np.testing.assert_array_equal(layer.parameters[1], np.full((5, 1), 2))
+
+
 def test_setting_layer_params_with_invalid_W_shape():
     layer = Layer(5, 0.002, lambda: ReLU())
     layer.parameters = (np.full((5, 6), 1), np.full((5, 1), 2))

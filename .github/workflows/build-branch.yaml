@@ -18,7 +18,7 @@ jobs:
       - name: Run Tests
         run: |
           python3 -m pip install --upgrade coverage
-          coverage run --source=./src/ setup.py test
+          coverage run --branch --source=./src/ setup.py test
       - name: Upload Coverage Report
         uses: codecov/codecov-action@v1
         with:
