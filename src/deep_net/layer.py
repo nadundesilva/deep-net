@@ -30,11 +30,11 @@ class Layer:
     _activation: Activation
 
     # Optimized paramaeters
-    _W: ArrayLike
-    _b: ArrayLike
+    _W: ArrayLike = None
+    _b: ArrayLike = None
 
     # Cached values (stored after forward pass and cleared after backward pass)
-    _A_prev: ArrayLike
+    _A_prev: ArrayLike = None
 
     def __init__(
         self,
@@ -61,7 +61,7 @@ class Layer:
         :param initializer: The initializer to be used for initializing the parameter tensors of this layer
         """
         W_shape = (self._size, prev_layer_size)
-        if hasattr(self, "_W"):
+        if self._W is not None:
             if self._W.shape != W_shape:
                 raise ValueError(
                     "Shape of the preset W does not match the expected shape"
@@ -70,7 +70,7 @@ class Layer:
             self._W = initializer.init_tensor(W_shape)
 
         b_shape = (self._size, 1)
-        if hasattr(self, "_b"):
+        if self._b is not None:
             if self._b.shape != b_shape:
                 raise ValueError(
                     "Shape of the preset b does not match the expected shape"
@@ -85,7 +85,7 @@ class Layer:
         :param A_prev: The activation of the previous layer
         :returns: The activation of this layer
         """
-        if not hasattr(self, "_W") or not hasattr(self, "_b"):
+        if self._W is None or self._b is None:
             raise ValueError("Layer parameters needs to initialized first")
         if len(A_prev.shape) != 2 or A_prev.shape[0] != self._W.shape[1]:
             raise ValueError(
@@ -107,10 +107,10 @@ class Layer:
         :param dA: The derivative of the activation of the current layer with respect to the loss
         :returns: The derivative of the activation of the previous layer with respect to the loss
         """
-        if not hasattr(self, "_W") or not hasattr(self, "_b"):
+        if self._W is None or self._b is None:
             raise ValueError("Layer parameters needs to initialized first")
 
-        if not hasattr(self, "_A_prev"):
+        if self._A_prev is None:
             raise ValueError(
                 "backward propagation can only be performed after one pass of forward propagation"
             )
@@ -147,12 +147,12 @@ class Layer:
 
     @parameters.setter
     def parameters(self, new_params):
-        if not hasattr(self, "_W") or self._W.shape == new_params[0].shape:
+        if self._W is None or self._W.shape == new_params[0].shape:
             self._W = new_params[0]
         else:
             raise ValueError("New shape of W need to be equal to the previous shape")
 
-        if not hasattr(self, "_b") or self._b.shape == new_params[1].shape:
+        if self._b is None or self._b.shape == new_params[1].shape:
             self._b = new_params[1]
         else:
             raise ValueError("New shape of b need to be equal to the previous shape")
