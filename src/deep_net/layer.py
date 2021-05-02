@@ -120,23 +120,24 @@ class Layer:
             raise ValueError(
                 "backward propagation can only be performed after one pass of forward propagation"
             )
+        batch_size = self._A_prev.shape[1]
         if (
             len(dA.shape) != 2
             or dA.shape[0] != self._W.shape[0]
-            or dA.shape[1] != self._A_prev.shape[1]
+            or dA.shape[1] != batch_size
         ):
             raise ValueError(
                 "Provided derivatives tensor of invalid shape, expected: ("
                 + str(self._W.shape[0])
                 + ", "
-                + str(self._A_prev.shape[1])
+                + str(batch_size)
                 + ") provided: "
                 + str(dA.shape)
             )
 
         dZ = dA * self._activation.derivative()
-        dW = np.dot(dZ, self._A_prev.T) / self._A_prev.shape[1]
-        db = np.sum(dZ, axis=1, keepdims=True) / self._A_prev.shape[1]
+        dW = np.dot(dZ, self._A_prev.T) / batch_size
+        db = np.sum(dZ, axis=1, keepdims=True) / batch_size
         dA_prev = np.dot(self._W.T, dZ)
 
         self._update_params(dW, db)

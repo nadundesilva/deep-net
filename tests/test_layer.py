@@ -71,7 +71,7 @@ test_data = [
     W_optimized, b_optimized""",
     test_data,
 )
-def test_layer_forward_propagation(
+def test_layer(
     W_init: ArrayLike,
     b_init: ArrayLike,
     A_prev: ArrayLike,
