@@ -14,9 +14,10 @@ limitations under the License.
 """
 
 from numpy.typing import ArrayLike
+import numpy as np
 
 
-class Loss:
+class LossFunc:
     """
     Abstract interface related to loss.
     """
@@ -38,3 +39,36 @@ class Loss:
         :param Y_hat: The predicted Y values tensor
         """
         raise NotImplementedError()
+
+
+class BinaryCrossEntropy(LossFunc):
+    """
+    Loss function for calculating the Binary Cross Entropy.
+    """
+
+    def calculate(self, Y: ArrayLike, Y_hat: ArrayLike) -> ArrayLike:
+        if Y.shape != Y_hat.shape:
+            raise ValueError(
+                "The shape of Y: "
+                + str(Y.shape)
+                + " is not equal to the shape of Y_hat: "
+                + str(Y_hat.shape)
+            )
+
+        batch_size = Y.shape[1]
+        return -(
+            np.dot(Y, np.log(Y_hat).T)
+            + np.dot((1 - Y), np.log(1 - Y_hat).T) / batch_size
+        )
+
+    def derivative(self, Y: ArrayLike, Y_hat: ArrayLike) -> ArrayLike:
+        if Y.shape != Y_hat.shape:
+            raise ValueError(
+                "The shape of Y: "
+                + str(Y.shape)
+                + " is not equal to the shape of Y_hat: "
+                + str(Y_hat.shape)
+            )
+
+        batch_size = Y.shape[1]
+        return ((Y_hat - Y) / (Y_hat * (1 - Y_hat))) / batch_size
