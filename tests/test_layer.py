@@ -84,18 +84,18 @@ def test_layer_forward_propagation(
     b_optimized: ArrayLike,
 ):
     batch_size = b_init.shape[1]
-    prev_layer_size = W_init.shape[0]
-    layer_size = W_init.shape[1]
+    current_layer_size = W_init.shape[0]
+    prev_layer_size = W_init.shape[1]
 
-    class MockInitializer(Initializer):
+    class MockWeightsInitializer(Initializer):
         def init_tensor(self, shape: Tuple) -> np.ndarray:
-            assert shape[0] == prev_layer_size and (
-                shape[1] == layer_size or shape[1] == batch_size
-            )
-            if shape[1] == layer_size:
-                return W_init
-            else:
-                return b_init
+            assert shape[0] == current_layer_size and shape[1] == prev_layer_size
+            return W_init
+
+    class MockBiasInitializer(Initializer):
+        def init_tensor(self, shape: Tuple) -> np.ndarray:
+            assert shape[0] == current_layer_size and shape[1] == 1
+            return b_init
 
     class MockActivation(Activation):
         def map(self, Z: ArrayLike) -> ArrayLike:
@@ -105,8 +105,14 @@ def test_layer_forward_propagation(
         def derivative(self) -> ArrayLike:
             return activation_derivative
 
-    layer = Layer(2, 0.01, lambda: MockActivation())
-    layer.init_parameters(3, MockInitializer())
+    layer = Layer(
+        current_layer_size,
+        0.01,
+        lambda: MockActivation(),
+        MockWeightsInitializer(),
+        MockBiasInitializer(),
+    )
+    layer.init_parameters(prev_layer_size)
 
     A = layer.propagate_forward(A_prev)
     np.testing.assert_array_equal(A, expected_A)
@@ -120,8 +126,8 @@ def test_layer_forward_propagation(
 
 
 def test_updating_layer_params():
-    layer = Layer(5, 0.002, lambda: ReLU())
-    layer.init_parameters(7, Constant(13))
+    layer = Layer(5, 0.002, lambda: ReLU(), Constant(13), Constant(13))
+    layer.init_parameters(7)
 
     assert layer.size == 5
     np.testing.assert_array_equal(layer.parameters[0], np.full((5, 7), 13))
@@ -135,8 +141,8 @@ def test_updating_layer_params():
 
 
 def test_updating_layer_params_with_invalid_shapes():
-    layer = Layer(5, 0.002, lambda: ReLU())
-    layer.init_parameters(7, Constant(13))
+    layer = Layer(5, 0.002, lambda: ReLU(), Constant(13), Constant(13))
+    layer.init_parameters(7)
 
     assert layer.size == 5
     np.testing.assert_array_equal(layer.parameters[0], np.full((5, 7), 13))
@@ -156,9 +162,9 @@ def test_updating_layer_params_with_invalid_shapes():
 
 
 def test_setting_layer_params():
-    layer = Layer(5, 0.002, lambda: ReLU())
+    layer = Layer(5, 0.002, lambda: ReLU(), Constant(13), Constant(13))
     layer.parameters = (np.full((5, 7), 1), np.full((5, 1), 2))
-    layer.init_parameters(7, Constant(13))
+    layer.init_parameters(7)
 
     assert layer.size == 5
     np.testing.assert_array_equal(layer.parameters[0], np.full((5, 7), 1))
@@ -166,11 +172,11 @@ def test_setting_layer_params():
 
 
 def test_setting_layer_params_with_invalid_W_shape():
-    layer = Layer(5, 0.002, lambda: ReLU())
+    layer = Layer(5, 0.002, lambda: ReLU(), Constant(13), Constant(13))
     layer.parameters = (np.full((5, 6), 1), np.full((5, 1), 2))
 
     with pytest.raises(ValueError) as e:
-        layer.init_parameters(7, Constant(13))
+        layer.init_parameters(7)
     assert (
         "ValueError('Shape of the preset W does not match the expected shape')"
         in str(e)
@@ -178,11 +184,11 @@ def test_setting_layer_params_with_invalid_W_shape():
 
 
 def test_setting_layer_params_with_invalid_b_shape():
-    layer = Layer(5, 0.002, lambda: ReLU())
+    layer = Layer(5, 0.002, lambda: ReLU(), Constant(13), Constant(13))
     layer.parameters = (np.full((5, 7), 1), np.full((5, 3), 2))
 
     with pytest.raises(ValueError) as e:
-        layer.init_parameters(7, Constant(13))
+        layer.init_parameters(7)
     assert (
         "ValueError('Shape of the preset b does not match the expected shape')"
         in str(e)
@@ -190,7 +196,7 @@ def test_setting_layer_params_with_invalid_b_shape():
 
 
 def test_propagation_without_param_init():
-    layer = Layer(5, 0.002, lambda: ReLU())
+    layer = Layer(5, 0.002, lambda: ReLU(), Constant(13), Constant(13))
 
     with pytest.raises(ValueError) as e:
         layer.propagate_forward(np.array([[12], [14], [13.2]]))
@@ -202,8 +208,8 @@ def test_propagation_without_param_init():
 
 
 def test_back_propagation_without_forward_propagation():
-    layer = Layer(5, 0.002, lambda: ReLU())
-    layer.init_parameters(3, Constant(13))
+    layer = Layer(5, 0.002, lambda: ReLU(), Constant(13), Constant(13))
+    layer.init_parameters(3)
 
     with pytest.raises(ValueError) as e:
         layer.propagate_backward(np.array([[0.25], [5], [1.2]]))
@@ -214,8 +220,8 @@ def test_back_propagation_without_forward_propagation():
 
 
 def test_forward_propagation_with_invalid_shape():
-    layer = Layer(7, 0.002, lambda: ReLU())
-    layer.init_parameters(3, Constant(41))
+    layer = Layer(7, 0.002, lambda: ReLU(), Constant(13), Constant(13))
+    layer.init_parameters(3)
 
     with pytest.raises(ValueError) as e:
         layer.propagate_forward(np.full((3, 6, 11), 12))
@@ -233,8 +239,8 @@ def test_forward_propagation_with_invalid_shape():
 
 
 def test_backward_propagation_with_invalid_shape():
-    layer = Layer(7, 0.002, lambda: ReLU())
-    layer.init_parameters(3, Constant(41))
+    layer = Layer(7, 0.002, lambda: ReLU(), Constant(13), Constant(13))
+    layer.init_parameters(3)
     layer.propagate_forward(np.full((3, 6), 12))
 
     with pytest.raises(ValueError) as e:

@@ -28,6 +28,8 @@ class Layer:
     _size: int
     _learning_rate: float
     _activation: Activation
+    _W_initializer: Initializer
+    _b_initializer: Initializer
 
     # Optimized paramaeters
     _W: ArrayLike = None
@@ -41,6 +43,8 @@ class Layer:
         size: int,
         learning_rate: int,
         create_activation: Callable[[], Activation],
+        W_initializer: Initializer,
+        b_initializer: Initializer,
     ):
         """
         Initialize the layer of the Neural Network.
@@ -52,8 +56,10 @@ class Layer:
         self._size = size
         self._learning_rate = learning_rate
         self._activation = create_activation()
+        self._W_initializer = W_initializer
+        self._b_initializer = b_initializer
 
-    def init_parameters(self, prev_layer_size: int, initializer: Initializer) -> None:
+    def init_parameters(self, prev_layer_size: int) -> None:
         """
         Initialize the parameter tensors of a neural network.
 
@@ -67,7 +73,7 @@ class Layer:
                     "Shape of the preset W does not match the expected shape"
                 )
         else:
-            self._W = initializer.init_tensor(W_shape)
+            self._W = self._W_initializer.init_tensor(W_shape)
 
         b_shape = (self._size, 1)
         if self._b is not None:
@@ -76,7 +82,7 @@ class Layer:
                     "Shape of the preset b does not match the expected shape"
                 )
         else:
-            self._b = initializer.init_tensor(b_shape)
+            self._b = self._b_initializer.init_tensor(b_shape)
 
     def propagate_forward(self, A_prev: ArrayLike) -> ArrayLike:
         """
