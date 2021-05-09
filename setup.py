@@ -40,6 +40,6 @@ setuptools.setup(
     python_requires=">=3.6",
     setup_requires=["pytest-runner"],
     install_requires=["numpy ~= 1.20.0"],
-    tests_require=["pytest ~= 6.2.3", "coverage ~= 5.5", "sklearn"],
+    tests_require=["pytest ~= 6.2.3", "coverage ~= 5.5", "sklearn", "seaborn"],
     extras_require={"dev": ["black ~= 20.8b1"]},
 )

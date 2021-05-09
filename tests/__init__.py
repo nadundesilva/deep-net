@@ -14,5 +14,8 @@ limitations under the License.
 """
 
 import numpy as np
+import os
 
 np.random.seed(27)  # To make all test cases reproducible
+
+TESTS_SHOW_PLOTS = os.getenv("TESTS_SHOW_PLOTS", "True").lower() == "true"

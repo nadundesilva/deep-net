@@ -15,6 +15,7 @@ limitations under the License.
 
 from typing import Generator, Tuple
 from numpy.typing import ArrayLike
+from tests import TESTS_SHOW_PLOTS
 from deep_net.model import Model
 from deep_net.layer import Layer
 from deep_net.activations import ReLU, Sigmoid
@@ -84,5 +85,13 @@ def test_model():
 
     model = Model(feature_count, layers, BinaryCrossEntropy())
     costs = model.fit(get_data_batches, epoch_count)
+
+    if TESTS_SHOW_PLOTS:
+        graph_points_distance = int((data_set_size / batch_size) * epoch_count / 100)
+        sns.lineplot(
+            x=[x for x in range(len(costs))][::graph_points_distance],
+            y=costs[::graph_points_distance],
+        )
+        plt.show()
 
     assert costs[-1] == 0.0298282125462872
