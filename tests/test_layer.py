@@ -99,7 +99,7 @@ def test_layer(
 
     class MockActivation(Activation):
         def map(self, Z: ArrayLike) -> ArrayLike:
-            np.testing.assert_array_equal(Z, expected_Z)
+            np.testing.assert_allclose(Z, expected_Z)
             return 2 * Z + 1
 
         def derivative(self) -> ArrayLike:
@@ -115,14 +115,14 @@ def test_layer(
     layer.init_parameters(prev_layer_size)
 
     A = layer.propagate_forward(A_prev)
-    np.testing.assert_array_equal(A, expected_A)
+    np.testing.assert_allclose(A, expected_A)
 
     dA_prev = layer.propagate_backward(dA)
-    np.testing.assert_array_equal(dA_prev, expected_dA_prev)
+    np.testing.assert_allclose(dA_prev, expected_dA_prev)
 
     assert layer.size == 2
-    np.testing.assert_array_equal(layer.parameters[0], W_optimized)
-    np.testing.assert_array_equal(layer.parameters[1], b_optimized)
+    np.testing.assert_allclose(layer.parameters[0], W_optimized)
+    np.testing.assert_allclose(layer.parameters[1], b_optimized)
 
 
 def test_updating_layer_params():
@@ -130,14 +130,14 @@ def test_updating_layer_params():
     layer.init_parameters(7)
 
     assert layer.size == 5
-    np.testing.assert_array_equal(layer.parameters[0], np.full((5, 7), 13))
-    np.testing.assert_array_equal(layer.parameters[1], np.full((5, 1), 13))
+    np.testing.assert_allclose(layer.parameters[0], np.full((5, 7), 13))
+    np.testing.assert_allclose(layer.parameters[1], np.full((5, 1), 13))
 
     layer.parameters = (np.full((5, 7), 1), np.full((5, 1), 2))
 
     assert layer.size == 5
-    np.testing.assert_array_equal(layer.parameters[0], np.full((5, 7), 1))
-    np.testing.assert_array_equal(layer.parameters[1], np.full((5, 1), 2))
+    np.testing.assert_allclose(layer.parameters[0], np.full((5, 7), 1))
+    np.testing.assert_allclose(layer.parameters[1], np.full((5, 1), 2))
 
 
 def test_updating_layer_params_with_invalid_shapes():
@@ -145,8 +145,8 @@ def test_updating_layer_params_with_invalid_shapes():
     layer.init_parameters(7)
 
     assert layer.size == 5
-    np.testing.assert_array_equal(layer.parameters[0], np.full((5, 7), 13))
-    np.testing.assert_array_equal(layer.parameters[1], np.full((5, 1), 13))
+    np.testing.assert_allclose(layer.parameters[0], np.full((5, 7), 13))
+    np.testing.assert_allclose(layer.parameters[1], np.full((5, 1), 13))
 
     with pytest.raises(ValueError) as e:
         layer.parameters = (np.full((5, 6), 1), np.full((5, 1), 2))
@@ -167,8 +167,8 @@ def test_setting_layer_params():
     layer.init_parameters(7)
 
     assert layer.size == 5
-    np.testing.assert_array_equal(layer.parameters[0], np.full((5, 7), 1))
-    np.testing.assert_array_equal(layer.parameters[1], np.full((5, 1), 2))
+    np.testing.assert_allclose(layer.parameters[0], np.full((5, 7), 1))
+    np.testing.assert_allclose(layer.parameters[1], np.full((5, 1), 2))
 
 
 def test_setting_layer_params_with_invalid_W_shape():

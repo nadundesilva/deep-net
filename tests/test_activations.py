@@ -120,22 +120,22 @@ def test_activations(
     activation = create_activation()
     map_output = activation.map(activation_input)
     assert map_output.shape == expected_map_output.shape
-    np.testing.assert_array_equal(map_output, expected_map_output)
+    np.testing.assert_allclose(map_output, expected_map_output)
 
     derivative_output = activation.derivative()
     assert derivative_output.shape == expected_derivative_output.shape
-    np.testing.assert_array_equal(derivative_output, expected_derivative_output)
+    np.testing.assert_allclose(derivative_output, expected_derivative_output)
 
     additional_map_output = activation.map(additional_activation_input)
     assert additional_map_output.shape == expected_additional_map_output.shape
-    np.testing.assert_array_equal(additional_map_output, expected_additional_map_output)
+    np.testing.assert_allclose(additional_map_output, expected_additional_map_output)
 
     additional_derivative_output = activation.derivative()
     assert (
         additional_derivative_output.shape
         == expected_additional_derivative_output.shape
     )
-    np.testing.assert_array_equal(
+    np.testing.assert_allclose(
         additional_derivative_output, expected_additional_derivative_output
     )
 

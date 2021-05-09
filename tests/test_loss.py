@@ -51,10 +51,10 @@ def test_loss_interface():
 )
 def test_loss_functions(loss_function, Y, Y_hat, expected_cost, expected_derivative):
     cost = loss_function.calculate(Y, Y_hat)
-    np.testing.assert_array_equal(cost, expected_cost)
+    np.testing.assert_allclose(cost, expected_cost)
 
     derivative = loss_function.derivative(Y, Y_hat)
-    np.testing.assert_array_equal(derivative, expected_derivative)
+    np.testing.assert_allclose(derivative, expected_derivative)
 
 
 @pytest.mark.parametrize(
