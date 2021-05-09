@@ -23,7 +23,7 @@ class LossFunc:
     Abstract interface related to loss.
     """
 
-    def calculate(self, Y: ArrayLike, Y_hat: ArrayLike):
+    def calculate(self, Y: ArrayLike, Y_hat: ArrayLike) -> ArrayLike:
         """
         Calcualte the loss.
 
@@ -32,7 +32,7 @@ class LossFunc:
         """
         raise NotImplementedError()
 
-    def derivative(self, Y: ArrayLike, Y_hat: ArrayLike):
+    def derivative(self, Y: ArrayLike, Y_hat: ArrayLike) -> ArrayLike:
         """
         Calcualte the derivative of loss.
 
