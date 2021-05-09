@@ -13,6 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+from deep_net import EPSILON
 from numpy.typing import ArrayLike
 import numpy as np
 
@@ -58,7 +59,7 @@ class BinaryCrossEntropy(LossFunc):
         batch_size = Y.shape[1]
         return -(
             np.dot(Y, np.log(Y_hat).T)
-            + np.dot((1 - Y), np.log(1 - Y_hat).T) / batch_size
+            + np.dot((1 - Y + EPSILON), np.log(1 - Y_hat + EPSILON).T) / batch_size
         )
 
     def derivative(self, Y: ArrayLike, Y_hat: ArrayLike) -> ArrayLike:
@@ -71,4 +72,4 @@ class BinaryCrossEntropy(LossFunc):
             )
 
         batch_size = Y.shape[1]
-        return ((Y_hat - Y) / (Y_hat * (1 - Y_hat))) / batch_size
+        return ((Y_hat - Y) / (Y_hat * (1 - Y_hat) + EPSILON)) / batch_size
