@@ -28,7 +28,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 
-def test_model():
+def test_model_overfit():
     # Generate data sets
     data_set = datasets.make_blobs(
         n_samples=10000,
@@ -96,4 +96,9 @@ def test_model():
         plt.title("Loss")
         plt.show()
 
-    assert costs[-1] == 0.0298282125462872
+    assert len(costs) == 1000
+    assert costs[0] == 31.556615889048192
+    assert costs[250] == 0.45018421701460876
+    assert costs[500] == 0.1511908059141514
+    assert costs[750] == 0.08505160315913661
+    assert costs[999] == 0.05768160035446388
