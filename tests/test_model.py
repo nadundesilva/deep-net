@@ -88,10 +88,12 @@ def test_model():
 
     if TESTS_SHOW_PLOTS:
         graph_points_distance = int((data_set_size / batch_size) * epoch_count / 100)
-        sns.lineplot(
+        line_plot = sns.lineplot(
             x=[x for x in range(len(costs))][::graph_points_distance],
             y=costs[::graph_points_distance],
         )
+        line_plot.set(xlabel="Epoch", ylabel="Loss")
+        plt.title("Loss")
         plt.show()
 
     assert costs[-1] == 0.0298282125462872
