@@ -87,7 +87,7 @@ def test_model():
     costs = model.fit(get_data_batches, epoch_count)
 
     if TESTS_SHOW_PLOTS:
-        graph_points_distance = int((data_set_size / batch_size) * epoch_count / 100)
+        graph_points_distance = int(epoch_count / 100)
         line_plot = sns.lineplot(
             x=[x for x in range(len(costs))][::graph_points_distance],
             y=costs[::graph_points_distance],

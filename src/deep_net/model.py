@@ -40,6 +40,7 @@ class Model:
     ) -> List[float]:
         costs = []
         for i in range(epoch_count):
+            epoch_costs = []
             for X_batch, Y_batch in data_batches():
                 # Forward propagation
                 A_prev = X_batch
@@ -49,10 +50,15 @@ class Model:
 
                 # Calculate loss
                 cost = float(self._loss_function.calculate(Y_batch, Y_hat))
-                costs.append(cost)
+                epoch_costs.append(cost)
 
                 # Backward propagation
                 dA = self._loss_function.derivative(Y_batch, Y_hat)
                 for layer in reversed(self._layers):
                     dA = layer.propagate_backward(dA)
+
+            mean_cost = sum(epoch_costs) / len(epoch_costs)
+            if i % (epoch_count / 10) == 0 or i == epoch_count - 1:
+                print("Epoch: " + str(i + 1) + " Cost: " + str(mean_cost))
+            costs.append(mean_cost)
         return costs
